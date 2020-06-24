@@ -1,0 +1,55 @@
+{
+    "version": "1.0.0",
+    "title": "Instance failure",
+    "description": "N/A",
+    "tags": [],
+    "steady-state-hypothesis": {
+        "title": "Load balancer healthy",
+        "probes": [
+            {
+                "type": "probe",
+                "name": "load_balancer_healthy",
+                "provider": {
+                    "type": "http",
+                    "url": "http://lb-1299066676.eu-west-2.elb.amazonaws.com"
+                },
+                "tolerance": [200]
+            }
+        ]
+    },
+    "method": [
+        {
+            "provider": {
+                "module": "chaosaws.ec2.actions",
+                "type": "python",
+                "func": "stop_instances",
+                "arguments": {
+                    "instance_ids": [
+                        "i-027d21c5dceed1dcd"
+                    ]
+                }
+            },
+            "type": "action",
+            "name": "stop-instances",
+            "pauses": {
+                "after": 60
+            }
+        }
+    ],
+    "rollbacks": [
+        {
+            "provider": {
+                "module": "chaosaws.ec2.actions",
+                "type": "python",
+                "func": "start_instances",
+                "arguments": {
+                    "instance_ids": [
+                        "i-027d21c5dceed1dcd"
+                    ]
+                }
+            },
+            "type": "action",
+            "name": "restart-instances"
+        }
+    ]
+}
