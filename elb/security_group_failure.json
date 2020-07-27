@@ -1,0 +1,61 @@
+{
+    "version": "1.0.0",
+    "title": "Target Group failure",
+    "description": "N/A",
+    "tags": [],
+    "steady-state-hypothesis": {
+        "title": "Load balancer healthy",
+        "probes": [
+            {
+                "type": "probe",
+                "name": "target_group_healthy",
+                "provider": {
+                    "type": "http",
+                    "url": "http://lb-1299066676.eu-west-2.elb.amazonaws.com"
+                },
+                "tolerance": [
+                    200
+                ]
+            }
+        ]
+    },
+    "method": [
+        {
+            "provider": {
+                "module": "chaosaws.ec2.actions",
+                "type": "python",
+                "func": "revoke_security_group_ingress",
+                "arguments": {
+                    "requested_security_group_id": "sg-0a8c32a1859bd9e7f",
+                    "ip_protocol": "tcp",
+                    "from_port": 80,
+                    "to_port": 80,
+                    "cidr_ip": "0.0.0.0/0"
+                }
+            },
+            "type": "action",
+            "name": "revoke_security_group_rule",
+            "pauses": {
+                "after": 20
+            }
+        }
+    ],
+    "rollbacks": [
+        {
+            "provider": {
+                "module": "chaosaws.ec2.actions",
+                "type": "python",
+                "func": "authorize_security_group_ingress",
+                "arguments": {
+                    "requested_security_group_id": "sg-0a8c32a1859bd9e7f",
+                    "ip_protocol": "tcp",
+                    "from_port": 80,
+                    "to_port": 80,
+                    "cidr_ip": "0.0.0.0/0"
+                }
+            },
+            "type": "action",
+            "name": "authorize_security_group_rule"
+        }
+    ]
+}
