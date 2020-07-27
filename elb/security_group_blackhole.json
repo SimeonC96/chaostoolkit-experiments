@@ -24,17 +24,13 @@
             "provider": {
                 "module": "chaosaws.ec2.actions",
                 "type": "python",
-                "func": "revoke_security_group_ingress",
+                "func": "blackhole_security_group",
                 "arguments": {
-                    "requested_security_group_id": "sg-0a8c32a1859bd9e7f",
-                    "ip_protocol": "tcp",
-                    "from_port": 80,
-                    "to_port": 80,
-                    "cidr_ip": "0.0.0.0/0"
+                    "instance_id":"i-027d21c5dceed1dcd"
                 }
             },
             "type": "action",
-            "name": "revoke_security_group_rule",
+            "name": "blackhole_security_group",
             "pauses": {
                 "after": 20
             }
@@ -45,17 +41,16 @@
             "provider": {
                 "module": "chaosaws.ec2.actions",
                 "type": "python",
-                "func": "authorize_security_group_ingress",
+                "func": "revert_blackhole_security_group",
                 "arguments": {
-                    "requested_security_group_id": "sg-0a8c32a1859bd9e7f",
-                    "ip_protocol": "tcp",
-                    "from_port": 80,
-                    "to_port": 80,
-                    "cidr_ip": "0.0.0.0/0"
+                    "instance_id":"i-027d21c5dceed1dcd",
+                    "security_groups":[
+                        "sg-09e3d0783812d6b1c"
+                    ]
                 }
             },
             "type": "action",
-            "name": "authorize_security_group_rule"
+            "name": "revert_blackhole_security_group"
         }
     ]
 }
