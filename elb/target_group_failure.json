@@ -1,0 +1,53 @@
+{
+    "version": "1.0.0",
+    "title": "Target Group failure",
+    "description": "N/A",
+    "tags": [],
+    "steady-state-hypothesis": {
+        "title": "Load balancer healthy",
+        "probes": [
+            {
+                "type": "probe",
+                "name": "target_group_healthy",
+                "provider": {
+                    "type": "http",
+                    "url": "http://lb-1299066676.eu-west-2.elb.amazonaws.com"
+                },
+                "tolerance": [200]
+            }
+        ]
+    },
+    "method": [
+        {
+            "provider": {
+                "module": "chaosaws.elbv2.actions",
+                "type": "python",
+                "func": "deregister_instances",
+                "arguments": {
+                    "tg_name": "target"
+                    
+                }
+            },
+            "type": "action",
+            "name": "deregister_instances",
+            "pauses": {
+                "after": 60
+            }
+        }
+    ],
+    "rollbacks": [
+        {
+            "provider": {
+                "module": "chaosaws.elbv2.actions",
+                "type": "python",
+                "func": "register_instances",
+                "arguments": {
+                    "tg_name": "target"
+                    
+                }
+            },
+            "type": "action",
+            "name": "register_instances"
+        }
+    ]
+}
